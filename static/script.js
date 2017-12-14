@@ -1,6 +1,11 @@
 var socket = io();
 $('form').submit(function(){
-  socket.emit('command', $('#m').val());
+  var pak = {
+    IP: $('#set_ip').val(),
+    out_port: $('#set_out_port').val(),
+    in_port: $('#set_in_port').val()
+  };
+  socket.emit('command', pak);
   $('#m').val('');
   return false;
 });

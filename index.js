@@ -1,6 +1,6 @@
 let numPackets = 100;
 let tInterval = 1000.0 / 60.0; // msec
-let port_http = 80;
+let port_http = 8080;
 
 let startTime = Date.now();
 console.log("OSC Eval launched at " + startTime);
@@ -22,51 +22,53 @@ http.listen(port_http, function(){
 var io = require('socket.io')(http);
 
 io.on('connection', function(socket){
-    console.log('a user connected');
-    socket.on('disconnect', function(){
-      console.log('user disconnected');
-    });
-    socket.on('command', function(msg){
-      console.log('message: ' + msg);
-      let array = [];
-      let latency = [];
-      let numMatched = 0;
+  console.log('a user connected');
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+  socket.on('command', function(msg){
+    // console.log('message: ' + msg);
+    let array = [];
+    let latency = [];
+    let numMatched = 0;
 
-      for(let i = 0; i < numPackets; i++)
-      {
-        latency.push(NaN);
-        array.push(Math.random().toFixed(8));
-        //array.push(i);
-      }
+    for(let i = 0; i < numPackets; i++)
+    {
+      latency.push(NaN);
+      array.push(Math.random().toFixed(8));
+      //array.push(i);
+    }
 
-      for(let i = 0; i < numPackets; i++)
-      {
-        setTimeout(function() {
-          let num = array[i];
-          client.send('/test', i, num, Date.now() - startTime, function (error) {
-            //console.log("sent " + i);
-          });
-        }, tInterval * i);
-      }
+    for(let i = 0; i < numPackets; i++)
+    {
+      setTimeout(function() {
+        let num = array[i];
+        client.send('/test', i, num, Date.now() - startTime, function (error) {
+          //console.log("sent " + i);
+        });
+      }, tInterval * i);
+    }
 
-      server.on('message', function (msg) {
-        let receivedTime = Date.now() - startTime;
-        if(msg[0] == '/test') {
-          let index = msg[1];
-          let arg = msg[2];
-          let sentTime = msg[3];
-          if(arg == array[index]) {
-            console.log(index + " matched:  " + arg + " == " + array[index]);
-            numMatched += 1;
-          }
-          else {
-            console.log(index + " mismatch: " + arg + " != " + array[index]);
-          }
-          console.log("latency: " + (receivedTime - sentTime) + " msec");
-          latency[index] = receivedTime - sentTime;
+    server.on('message', function (msg) {
+      let receivedTime = Date.now() - startTime;
+      if(msg[0] == '/test') {
+        let index = msg[1];
+        let arg = msg[2];
+        let sentTime = msg[3];
+        if(arg == array[index]) {
+          console.log(index + " matched:  " + arg + " == " + array[index]);
+          numMatched += 1;
         }
-      });
+        else {
+          console.log(index + " mismatch: " + arg + " != " + array[index]);
+        }
+        console.log("latency: " + (receivedTime - sentTime) + " msec");
+        latency[index] = receivedTime - sentTime;
+      }
     });
+    console.log('message: ' + msg.IP + " " + msg.in_port + " " + msg.out_port);
+
+  });
 });
 
 // logging
