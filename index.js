@@ -1,5 +1,3 @@
-let numPackets = 100;
-let tInterval = 1000.0 / 60.0; // msec
 let port_http = 8080;
 
 let startTime = Date.now();
@@ -32,6 +30,9 @@ io.on('connection', function(socket){
 
     let server = new osc.Server(msg.in_port, msg.IP);
     let client = new osc.Client('', msg.out_port);
+
+    let numPackets = msg.num_packets;
+    let tInterval = 1000.0 / msg.fps; // msec
 
     for(let i = 0; i < numPackets; i++)
     {
