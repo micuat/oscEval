@@ -1,10 +1,32 @@
-// npm install node-osc
+let numPackets = 100;
+let tInterval = 1000.0 / 60.0; // msec
+let port_http = 80;
+
+// init dependencies
 var osc = require('node-osc');
 var server = new osc.Server(12000, '0.0.0.0');
 var client = new osc.Client('', 12001);
 
-let numPackets = 100;
-let tInterval = 1000.0 / 60.0; // msec
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+app.use('/', express.static('static'));
+
+http.listen(port_http, function(){
+    console.log('listening on *:' + port_http);
+});
+
+var io = require('socket.io')(http);
+
+io.on('connection', function(socket){
+    console.log('a user connected');
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+    });
+    socket.on('command', function(msg){
+        console.log('message: ' + msg);
+    });
+});
 
 // logging
 // var fs = require('fs');
@@ -59,14 +81,14 @@ server.on('message', function (msg) {
 });
 
 // terminate
-setTimeout(function() {
-  // statistics
-  let sum = latency.reduce((previous, current) => current += previous);
-  let avg = sum / latency.length;
-  console.log("--------");
-  console.log("statistics");
-  console.log("average latency: " + avg + " msec");
-  console.log("correct rate: " + parseFloat(numMatched) / latency.length);
+// setTimeout(function() {
+//   // statistics
+//   let sum = latency.reduce((previous, current) => current += previous);
+//   let avg = sum / latency.length;
+//   console.log("--------");
+//   console.log("statistics");
+//   console.log("average latency: " + avg + " msec");
+//   console.log("correct rate: " + parseFloat(numMatched) / latency.length);
 
-  process.exit();
-}, tInterval * numPackets + 1000);
+//   process.exit();
+// }, tInterval * numPackets + 1000);
