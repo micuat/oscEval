@@ -7,8 +7,6 @@ console.log("OSC Eval launched at " + startTime);
 
 // init dependencies
 var osc = require('node-osc');
-var server = new osc.Server(12000, '0.0.0.0');
-var client = new osc.Client('', 12001);
 
 var express = require('express');
 var app = express();
@@ -27,10 +25,13 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
   socket.on('command', function(msg){
-    // console.log('message: ' + msg);
+    console.log('message: ' + msg.IP);
     let array = [];
     let latency = [];
     let numMatched = 0;
+
+    let server = new osc.Server(msg.in_port, msg.IP);
+    let client = new osc.Client('', msg.out_port);
 
     for(let i = 0; i < numPackets; i++)
     {
@@ -44,7 +45,7 @@ io.on('connection', function(socket){
       setTimeout(function() {
         let num = array[i];
         client.send('/test', i, num, Date.now() - startTime, function (error) {
-          //console.log("sent " + i);
+          // console.log("sent " + i);
         });
       }, tInterval * i);
     }
@@ -66,8 +67,6 @@ io.on('connection', function(socket){
         latency[index] = receivedTime - sentTime;
       }
     });
-    console.log('message: ' + msg.IP + " " + msg.in_port + " " + msg.out_port);
-
   });
 });
 
