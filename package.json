@@ -1,0 +1,26 @@
+{
+  "name": "osc-evaluation",
+  "version": "0.0.1",
+  "description": "simple script to test osc latency",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-osc": "^2.1.0",
+    "express": "^4.16.2",
+    "serve-static": "^1.13.1"
+  },
+  "engines": {
+    "node": "^8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/micuat/oscEval"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Naoto Hieda",
+  "license": "MIT"
+}

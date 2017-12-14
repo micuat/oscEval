@@ -3,7 +3,7 @@ var osc = require('node-osc');
 var server = new osc.Server(12000, '0.0.0.0');
 var client = new osc.Client('', 12001);
 
-let numPackets = 10000;
+let numPackets = 100;
 let tInterval = 1000.0 / 60.0; // msec
 
 // logging
