@@ -56,17 +56,42 @@ io.on('connection', function(socket){
         let index = msg[1];
         let arg = msg[2];
         let sentTime = msg[3];
+        let str = "";
         if(arg == array[index]) {
-          console.log(index + " matched:  " + arg + " == " + array[index]);
+          str += index + " matched:  " + arg + " == " + array[index];
           numMatched += 1;
         }
         else {
-          console.log(index + " mismatch: " + arg + " != " + array[index]);
+          str += index + " mismatch: " + arg + " != " + array[index];
         }
-        console.log("latency: " + (receivedTime - sentTime) + " msec");
+        str += " latency: " + (receivedTime - sentTime) + " msec";
+        socket.emit('log', str);
+        console.log(str);
         latency[index] = receivedTime - sentTime;
       }
     });
+
+    // terminate
+    setTimeout(function() {
+      // statistics
+      let sum = latency.reduce((previous, current) => current += previous);
+      let avg = sum / latency.length;
+      let str = "--------";
+      socket.emit('log', str);
+      console.log(str);
+      str = "correct rate: " + parseFloat(numMatched) / latency.length;
+      socket.emit('log', str);
+      console.log(str);
+      str = "average latency: " + avg + " msec";
+      socket.emit('log', str);
+      console.log(str);
+      str = "statistics";
+      socket.emit('log', str);
+      console.log(str);
+      str = "--------";
+      socket.emit('log', str);
+      console.log(str);
+    }, tInterval * numPackets + 1000);
   });
 });
 
@@ -79,18 +104,3 @@ io.on('connection', function(socket){
 //   log_file.write(util.format(d) + '\n');
 //   log_stdout.write(util.format(d) + '\n');
 // }
-
-
-
-// terminate
-// setTimeout(function() {
-//   // statistics
-//   let sum = latency.reduce((previous, current) => current += previous);
-//   let avg = sum / latency.length;
-//   console.log("--------");
-//   console.log("statistics");
-//   console.log("average latency: " + avg + " msec");
-//   console.log("correct rate: " + parseFloat(numMatched) / latency.length);
-
-//   process.exit();
-// }, tInterval * numPackets + 1000);
