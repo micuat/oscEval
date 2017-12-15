@@ -28,8 +28,8 @@ io.on('connection', function(socket){
     let latency = [];
     let numMatched = 0;
 
-    let server = new osc.Server(msg.in_port, msg.IP);
-    let client = new osc.Client('', msg.out_port);
+    let server = new osc.Server(msg.in_port, '0.0.0.0');
+    let client = new osc.Client(msg.IP, msg.out_port);
 
     let numPackets = msg.num_packets;
     let tInterval = 1000.0 / msg.fps; // msec
@@ -75,8 +75,15 @@ io.on('connection', function(socket){
     // terminate
     setTimeout(function() {
       // statistics
-      let sum = latency.reduce((previous, current) => current += previous);
-      let avg = sum / latency.length;
+      let count = 0;
+      let sum = 0;
+      for(let i = 0; i < array.length; i++) {
+        if(latency[i] != NaN) {
+          sum += latency[i];
+          count++;
+        }
+      }
+      let avg = sum / count;
       let str = "--------";
       socket.emit('log', str);
       console.log(str);
