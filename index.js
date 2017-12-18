@@ -11,9 +11,18 @@ var app = express();
 var http = require('http').Server(app);
 app.use('/', express.static('static'));
 
+process.on('uncaughtException', function(err) {
+    if(err.errno === 'EADDRINUSE')
+         console.log("already running");
+    else
+         console.log(err);
+    process.exit(1);
+});
+
 http.listen(port_http, function(){
   console.log('listening on *:' + port_http);
 });
+
 
 var io = require('socket.io')(http);
 
