@@ -11,6 +11,8 @@ var app = express();
 var http = require('http').Server(app);
 app.use('/', express.static('static'));
 
+var server;
+
 process.on('uncaughtException', function(err) {
     if(err.errno === 'EADDRINUSE')
          console.log("already running");
@@ -37,7 +39,8 @@ io.on('connection', function(socket){
     let latency = [];
     let numMatched = 0;
 
-    let server = new osc.Server(msg.in_port, '0.0.0.0');
+    if(server != null) server.kill();
+    server = new osc.Server(msg.in_port, '0.0.0.0');
     let client = new osc.Client(msg.IP, msg.out_port);
 
     let numPackets = msg.num_packets;
