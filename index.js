@@ -1,6 +1,8 @@
 let port_http = 8080;
 
-let startTime = Date.now();
+// time in milliseconds
+var hrTime = process.hrtime()
+let startTime = hrTime[0] * 1000 + hrTime[1] / 1000000;
 console.log("OSC Eval launched at " + startTime);
 
 // init dependencies
@@ -57,14 +59,17 @@ io.on('connection', function(socket){
     {
       setTimeout(function() {
         let num = array[i];
-        client.send('/test', i, num, Date.now() - startTime, function (error) {
+        let hrTime = process.hrtime();
+        let curTime = hrTime[0] * 1000 + hrTime[1] / 1000000 - startTime;
+        client.send('/test', i, num, curTime, function (error) {
         });
       }, tInterval * i);
     }
 
     server.on('message', function (msg) {
-      let receivedTime = Date.now() - startTime;
-      if(msg[0] == '/test') {
+      let hrTime = process.hrtime();
+      let receivedTime = hrTime[0] * 1000 + hrTime[1] / 1000000 - startTime;
+    if(msg[0] == '/test') {
         let index = msg[1];
         let arg = msg[2];
         let sentTime = msg[3];
