@@ -86,7 +86,7 @@ io.on('connection', function(socket){
       let count = 0;
       let sum = 0;
       for(let i = 0; i < array.length; i++) {
-        if(latency[i] != NaN) {
+        if(!isNaN(latency[i])) {
           sum += latency[i];
           count++;
         }
@@ -95,7 +95,7 @@ io.on('connection', function(socket){
       let str = "--------";
       socket.emit('log', str);
       console.log(str);
-      str = "correct rate: " + parseFloat(numMatched) / latency.length;
+      str = "error packets: " + (numPackets - count) + " out of " + numPackets;
       socket.emit('log', str);
       console.log(str);
       str = "average latency: " + avg + " msec";
