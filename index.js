@@ -55,7 +55,6 @@ io.on('connection', function(socket){
       setTimeout(function() {
         let num = array[i];
         client.send('/test', i, num, Date.now() - startTime, function (error) {
-          // console.log("sent " + i);
         });
       }, tInterval * i);
     }
@@ -111,13 +110,3 @@ io.on('connection', function(socket){
     }, tInterval * numPackets + 1000);
   });
 });
-
-// logging
-// var fs = require('fs');
-// var util = require('util');
-// var log_file = fs.createWriteStream('/home/pi/shared/scenesouvertes/raspi_ble_osc/log', {flags: 'w'});
-// var log_stdout = process.stdout;
-// console.log = function(d) {
-//   log_file.write(util.format(d) + '\n');
-//   log_stdout.write(util.format(d) + '\n');
-// }
