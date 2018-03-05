@@ -12,7 +12,7 @@ module.exports = function (msg, params) {
   this.numPackets = msg.num_packets;
   this.tInterval = 1000.0 / msg.fps; // msec
 
-  this.evaluate = function (doneCallback) {
+  this.evaluate = function (printDebug, doneCallback) {
     for(let i = 0; i < this.numPackets; i++)
     {
       this.latency.push(NaN);
@@ -44,8 +44,7 @@ module.exports = function (msg, params) {
           str += index + " mismatch: " + arg + " != " + self.array[index];
         }
         str += " latency: " + (receivedTime - sentTime) + " msec";
-        //socket.emit('log', str);
-        console.log(str);
+        printDebug(str);
         self.latency[index] = receivedTime - sentTime;
       }
     });

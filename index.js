@@ -39,6 +39,11 @@ io.on('connection', function(socket){
     console.log('message: ' + msg.IP);
     let params = {startTime: startTime};
 
+    function printDebug (str) {
+      socket.emit('log', str);
+      console.log(str);
+    }
+
     function doneEvaluation () {
       // statistics
       let str = "--------";
@@ -59,7 +64,7 @@ io.on('connection', function(socket){
     }
 
     let eval = new midi_eval(msg, params);
-    eval.evaluate(doneEvaluation);
+    eval.evaluate(printDebug, doneEvaluation);
   });
 });
 
