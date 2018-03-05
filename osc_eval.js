@@ -12,7 +12,7 @@ module.exports = function (msg, params) {
   this.numPackets = msg.num_packets;
   this.tInterval = 1000.0 / msg.fps; // msec
 
-  this.evaluate = function () {
+  this.evaluate = function (doneCallback) {
     for(let i = 0; i < this.numPackets; i++)
     {
       this.latency.push(NaN);
@@ -51,6 +51,9 @@ module.exports = function (msg, params) {
         self.latency[index] = receivedTime - sentTime;
       }
     });
+
+    // when done
+    setTimeout(doneCallback, this.tInterval * this.numPackets + 1000);
   }
 
   this.getCorrectRate = function () {
