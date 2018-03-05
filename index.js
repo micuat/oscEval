@@ -1,10 +1,15 @@
 let port_http = 8080;
 
 var osc_eval = require('./osc_eval');
-var midi_eval = require('./midi_eval');
 
-// if(process.argv[2] !== undefined)
-// blah
+var oscMode = true;
+if(process.argv[2] !== undefined) {
+  if(process.argv[2] == 'midi') {
+    var midi_eval = require('./midi_eval');
+    oscMode = false;
+    port_http = 8081;
+  }
+}
 
 let startTime = Date.now();
 console.log("Scenic Eval launched at " + startTime);
@@ -63,7 +68,12 @@ io.on('connection', function(socket){
       console.log(str);
     }
 
-    let eval = new midi_eval(msg, params);
+    let eval = null;
+    if(oscMode) {
+      eval = new osc_eval(msg, params);
+    } else {
+      eval = new midi_eval(msg, params);
+    }
     eval.evaluate(printDebug, doneEvaluation);
   });
 });
