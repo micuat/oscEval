@@ -26,6 +26,7 @@ module.exports = function (msg, params) {
   this.numMatched = 0;
 
   this.numPackets = msg.num_packets;
+  if (this.numPackets > 128) this.numPackets = 128;
   this.tInterval = 1000.0 / msg.fps; // msec
 
   this.evaluate = function (printDebug, doneCallback) {
