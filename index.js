@@ -1,7 +1,7 @@
 let port_http = 8080;
 
 var osc_eval = require('./osc_eval');
-//var midi_eval = require('./midi_eval');
+var midi_eval = require('./midi_eval');
 
 // if(process.argv[2] !== undefined)
 // blah
@@ -39,26 +39,26 @@ io.on('connection', function(socket){
     console.log('message: ' + msg.IP);
     let params = {startTime: startTime};
 
-function doneEvaluation () {
-  // statistics
-  let str = "--------";
-  socket.emit('log', str);
-  console.log(str);
-  str = "correct rate: " + eval.getCorrectRate();
-  socket.emit('log', str);
-  console.log(str);
-  str = "average latency: " + eval.getAverageLatency() + " msec";
-  socket.emit('log', str);
-  console.log(str);
-  str = "statistics";
-  socket.emit('log', str);
-  console.log(str);
-  str = "--------";
-  socket.emit('log', str);
+    function doneEvaluation () {
+      // statistics
+      let str = "--------";
+      socket.emit('log', str);
+      console.log(str);
+      str = "correct rate: " + eval.getCorrectRate();
+      socket.emit('log', str);
+      console.log(str);
+      str = "average latency: " + eval.getAverageLatency() + " msec";
+      socket.emit('log', str);
+      console.log(str);
+      str = "statistics";
+      socket.emit('log', str);
+      console.log(str);
+      str = "--------";
+      socket.emit('log', str);
       console.log(str);
     }
 
-    let eval = new osc_eval(msg, params);
+    let eval = new midi_eval(msg, params);
     eval.evaluate(doneEvaluation);
   });
 });

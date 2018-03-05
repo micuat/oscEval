@@ -17,7 +17,6 @@ module.exports = function (msg, params) {
     {
       this.latency.push(NaN);
       this.array.push(Math.random().toFixed(8));
-      //array.push(i);
     }
 
     let self = this;
@@ -26,7 +25,6 @@ module.exports = function (msg, params) {
       setTimeout(function() {
         let num = self.array[i];
         self.client.send('/test', i, num, Date.now() - self.params.startTime, function (error) {
-          // console.log("sent " + i);
         });
       }, this.tInterval * i);
     }
