@@ -22,6 +22,7 @@ module.exports = function (msg, params) {
   this.params = params;
   this.array = [];
   this.latency = [];
+  this.sentTimes = [];
   this.numMatched = 0;
 
   this.numPackets = msg.num_packets;
@@ -32,7 +33,8 @@ module.exports = function (msg, params) {
     for(let i = 0; i < this.numPackets; i++)
     {
       this.latency.push(NaN);
-      this.array.push(Math.floor(Math.random()*128));
+      //this.array.push(Math.floor(Math.random()*128));
+      this.array.push(i);
     }
 
     let self = this;
@@ -40,18 +42,21 @@ module.exports = function (msg, params) {
     {
       setTimeout(function() {
         let num = self.array[i];
-        let m = [i,num,22];
+        let m = [176,22, num];
         midi_output.sendMessage(m);
+        let sentTime = Date.now() - self.params.startTime;
+        self.sentTimes[i] = sentTime;
+        //console.log('send ', m);
       }, this.tInterval * i);
     }
 
-    midi_input.on('message', function(deltaTime, msg) {
-      console.log('received m:' + message + ' d:' + deltaTime);
+    function onMidi (deltaTime, msg) {
+      console.log('received m:' + msg + ' d:' + deltaTime);
       let receivedTime = Date.now() - self.params.startTime;
       if(true) { // can be used for note/control detection
-        let index = msg[0];
-        let arg = msg[1];
-        //let sentTime = msg[3]; // can be stored in this
+        let index = msg[2];
+        let arg = msg[2];
+        let sentTime = self.sentTimes[index];
         let str = "";
         if(arg == self.array[index]) {
           str += index + " matched:  " + arg + " == " + self.array[index];
@@ -60,16 +65,19 @@ module.exports = function (msg, params) {
         else {
           str += index + " mismatch: " + arg + " != " + self.array[index];
         }
-        //str += " latency: " + (receivedTime - sentTime) + " msec";
+        str += " latency: " + (receivedTime - sentTime) + " msec";
         //socket.emit('log', str);
         console.log(str);
-        //self.latency[index] = receivedTime - sentTime;
+        self.latency[index] = receivedTime - sentTime;
       }
-    });
+    }
+
+    midi_input.on('message', onMidi);
 
     // when done
     setTimeout(function () {
       doneCallback();
+      midi_input.removeListener('message', onMidi);
     }, this.tInterval * this.numPackets + 1000);
   }
 
@@ -78,7 +86,6 @@ module.exports = function (msg, params) {
   }
 
   this.getAverageLatency = function () {
-    return undefined;
     let count = 0;
     let sum = 0;
     for(let i = 0; i < this.array.length; i++) {
