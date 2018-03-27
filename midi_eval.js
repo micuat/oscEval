@@ -26,7 +26,7 @@ module.exports = function (msg, params) {
   this.numMatched = 0;
 
   this.numPackets = msg.num_packets;
-  if (this.numPackets > 128) this.numPackets = 128;
+  if (this.numPackets > 128 * 128) this.numPackets = 128 * 128;
   this.tInterval = 1000.0 / msg.fps; // msec
 
   this.evaluate = function (printDebug, doneCallback) {
@@ -43,7 +43,8 @@ module.exports = function (msg, params) {
     {
       setTimeout(function() {
         let num = self.array[i];
-        let m = [176,22, num];
+        // 2224: 11100000 pitch bend change
+        let m = [224, parseInt(num / 128), num % 128];
         midi_output.sendMessage(m);
         let sentTime = Date.now() - self.params.startTime;
         self.sentTimes[i] = sentTime;
@@ -55,8 +56,8 @@ module.exports = function (msg, params) {
       console.log('received m:' + msg + ' d:' + deltaTime);
       let receivedTime = Date.now() - self.params.startTime;
       if(true) { // can be used for note/control detection
-        let index = msg[2];
-        let arg = msg[2];
+        let index = msg[1] * 128 + msg[2];
+        let arg = msg[1] * 128 + msg[2];
         let sentTime = self.sentTimes[index];
         let str = "";
         if(arg == self.array[index]) {
