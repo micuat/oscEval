@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=OSC Eval
+Comment=OSC Eval
+Exec=bash /home/pi/oscEval/entrypoint.sh
+Terminal=true
+Type=Application
+Categories=Utility
