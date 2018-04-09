@@ -13,8 +13,8 @@ $('form').submit(function(){
   return false;
 });
 socket.on('log', function(msg){
-  $('#messages').prepend($('<li>').text(msg));
-  var count = 0;
+  //$('#messages').prepend($('<li>').text(msg));
+  //var count = 0;
   // $("li").each(function( index ) {
   // count++;
   // if(count > 5)

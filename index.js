@@ -79,13 +79,13 @@ io.on('connection', function(socket){
       let str = "--------";
       socket.emit('log', str);
       console.log(str);
-      str = "correct rate: " + eval.getCorrectRate();
+      str = "statistics";
       socket.emit('log', str);
       console.log(str);
       str = "average latency: " + eval.getAverageLatency() + " msec";
       socket.emit('log', str);
       console.log(str);
-      str = "statistics";
+      str = "correct rate: " + eval.getCorrectRate();
       socket.emit('log', str);
       console.log(str);
       str = "--------";
