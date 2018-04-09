@@ -1,4 +1,5 @@
 var socket = io();
+var oscMode = true;
 $('form').submit(function(){
   var pak = {
     IP: $('#set_ip').val(),
@@ -19,4 +20,14 @@ socket.on('log', function(msg){
   // if(count > 5)
   //   $( this ).remove();
   // });
+});
+socket.on('oscmode', function(msg){
+  oscMode = msg;
+  if(msg == false) {
+    // midi mode
+    document.title = "MIDI Eval";
+    $('#div_ip').remove();
+    $('#div_out_port').remove();
+    $('#div_in_port').remove();
+  }
 });
