@@ -3,6 +3,10 @@ let port_http = 8080;
 var osc_eval = require('./osc_eval');
 
 var oscMode = true;
+var resx = 800/2, resy = 600/2;
+
+const { exec } = require('child_process');
+
 if(process.argv[2] !== undefined) {
   if(process.argv[2] == 'midi') {
     var midi_eval = require('./midi_eval');
@@ -10,6 +14,20 @@ if(process.argv[2] !== undefined) {
     port_http = 8081;
   }
 }
+if(process.argv[3] !== undefined
+&& process.argv[4] !== undefined) {
+  resx = process.argv[3];
+  resy = process.argv[4];
+}
+
+setInterval(function() {
+  if(oscMode) {
+    exec('wmctrl -r \'OSC Eval\' -e 0,0,0,' + resx + ',' + resy);
+  }
+  else {
+    exec('wmctrl -r \'MIDI Eval\' -e 0,' + resx + ',0,' + resx + ',' + resy);
+  }
+}, 1000);
 
 // time in milliseconds
 var hrTime = process.hrtime()
