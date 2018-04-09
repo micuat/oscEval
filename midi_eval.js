@@ -61,6 +61,7 @@ module.exports = function (msg, params) {
     }
 
     function onMidi (deltaTime, msg) {
+      if(msg[0] != 224) return;
       console.log('received m:' + msg + ' d:' + deltaTime);
       let hrTime = process.hrtime();
       let receivedTime = hrTime[0] * 1000 + hrTime[1] / 1000000 - self.params.startTime;
