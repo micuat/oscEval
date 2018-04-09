@@ -31,3 +31,10 @@ socket.on('oscmode', function(msg){
     $('#div_in_port').remove();
   }
 });
+
+$('#set_ip').on('change', function() {
+  socket.emit('set_ip', this.value);
+});
+$('#set_out_port').on('change', function() {
+  socket.emit('set_out_port', this.value);
+});

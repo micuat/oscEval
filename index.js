@@ -1,9 +1,13 @@
 let port_http = 8080;
 
 var osc_eval = require('./osc_eval');
+var osc = require('node-osc');
 
 var oscMode = true;
 var resx = 800/2, resy = 600/2;
+
+var keepAlivePort = 12001;
+var keepAliveIp = '10.10.30.38';
 
 const { exec } = require('child_process');
 
@@ -23,9 +27,13 @@ if(process.argv[3] !== undefined
 setInterval(function() {
   if(oscMode) {
     exec('wmctrl -r \'OSC Eval\' -e 0,0,0,' + resx + ',' + resy);
+    let client = new osc.Client(keepAliveIp, keepAlivePort);
+    client.send('/scenic/keepalive', function (error) {});
   }
   else {
     exec('wmctrl -r \'MIDI Eval\' -e 0,' + resx + ',0,' + resx + ',' + resy);
+    let eval = new midi_eval();
+    eval.keepAlive({num_packets:0}, {});
   }
 }, 1000);
 
@@ -64,6 +72,12 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
+  socket.on('set_ip', function(msg){
+    keepAliveIp = msg;
+  });
+  socket.on('set_out_port', function(msg){
+    keepAlivePort = msg;
+  });
   socket.on('command', function(msg){
     console.log('message: ' + msg.IP);
 
@@ -79,13 +93,13 @@ io.on('connection', function(socket){
       let str = "--------";
       socket.emit('log', str);
       console.log(str);
-      str = "statistics";
+      str = "correct rate: " + eval.getCorrectRate();
       socket.emit('log', str);
       console.log(str);
       str = "average latency: " + eval.getAverageLatency() + " msec";
       socket.emit('log', str);
       console.log(str);
-      str = "correct rate: " + eval.getCorrectRate();
+      str = "statistics";
       socket.emit('log', str);
       console.log(str);
       str = "--------";

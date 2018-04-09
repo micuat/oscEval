@@ -18,6 +18,7 @@ exec("aconnect -l", (err, stdout, stderr) => {
 });
 
 module.exports = function (msg, params) {
+  this.keepAlive = function () {midi_output.sendMessage([226, 0, 0]);}
 
   this.params = params;
   this.array = [];
@@ -25,9 +26,15 @@ module.exports = function (msg, params) {
   this.sentTimes = [];
   this.numMatched = 0;
 
-  this.numPackets = msg.num_packets;
-  if (this.numPackets > 128 * 128) this.numPackets = 128 * 128;
-  this.tInterval = 1000.0 / msg.fps; // msec
+  if(msg !== undefined) {
+    this.numPackets = msg.num_packets;
+    if (this.numPackets > 128 * 128) this.numPackets = 128 * 128;
+    this.tInterval = 1000.0 / msg.fps; // msec
+  }
+  else {
+    this.numPackets = 0;
+    this.tInterval = 1;
+  }
 
   this.evaluate = function (printDebug, doneCallback) {
 
